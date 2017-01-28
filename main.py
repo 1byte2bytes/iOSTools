@@ -27,8 +27,13 @@ def make_folder_for_build(folder, build):
 def strip_img2_header(filename, stripped_filename):
     file_bytes = []
     with open(filename, 'rb') as f:
-        for i in range(2048):
-            f.read()
+        header_bytes = []
+        for i in range(4):
+            header_bytes.append(f.read())
+        f.seek(0)
+        if header_bytes[0].startswith(b'8900'):
+            for i in range(2048):
+                f.read()
         while 1:
             byte = f.read()
             file_bytes.append(byte)
