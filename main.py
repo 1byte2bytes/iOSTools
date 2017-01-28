@@ -16,12 +16,12 @@ def log_fatal(message):
 
 def make_folder_for_build(folder, build):
     if os.path.isdir("{}/{}".format(folder, build)):
-        log_info("Clearing the Contents folder")
+        log_info("Clearing the {} folder".format(folder))
         shutil.rmtree("{}/{}".format(folder, build))
-        log_info("Creating the Contents folder")
+        log_info("Creating the {} folder".format(folder))
         os.mkdir("{}/{}".format(folder, build))
     else:
-        log_info("Creating the Contents folder")
+        log_info("Creating the {} folder".format(folder))
         os.mkdir("{}/{}".format(folder, build))
 
 def strip_img2_header(filename, stripped_filename):
