@@ -25,23 +25,13 @@ def make_folder_for_build(folder, build):
         os.mkdir("{}/{}".format(folder, build))
 
 def strip_img2_header(filename, stripped_filename):
-    file_bytes = []
+    file_bytes = b''
     with open(filename, 'rb') as f:
-        header_bytes = []
-        for i in range(4):
-            header_bytes.append(f.read())
-        f.seek(0)
-        if header_bytes[0].startswith(b'8900'):
-            for i in range(2048):
-                f.read()
-        while 1:
-            byte = f.read()
-            file_bytes.append(byte)
-            if not byte:
-                break
+        file_bytes = f.read()
+        if file_bytes.startswith(b'8900'):
+            file_bytes = file_bytes[2048:]
     with open(stripped_filename, 'wb') as f:
-        for byte in file_bytes:
-            f.write(byte)
+        f.write(file_bytes)
 
 
 valid_builds = ["1A543a"]
