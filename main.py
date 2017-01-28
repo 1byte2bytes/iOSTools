@@ -28,8 +28,10 @@ def strip_img2_header(filename, stripped_filename):
     file_bytes = b''
     with open(filename, 'rb') as f:
         file_bytes = f.read()
-        if file_bytes.startswith(b'8900'):
+        if file_bytes.startswith(b'89001.0'):
             file_bytes = file_bytes[2048:]
+        else:
+            log_info("No 8900 v1.0 header found")
     with open(stripped_filename, 'wb') as f:
         f.write(file_bytes)
 
