@@ -24,7 +24,7 @@ def make_folder_for_build(folder, build):
         log_info("Creating the {} folder".format(folder))
         os.mkdir("{}/{}".format(folder, build))
 
-def strip_img2_header(filename, stripped_filename):
+def strip_8900_header(filename, stripped_filename):
     file_bytes = b''
     with open(filename, 'rb') as f:
         file_bytes = f.read()
@@ -62,7 +62,7 @@ for IPSW in IPSW_files:
     img2_files = glob.glob("Temp/{}/Firmware/all_flash/*/*.img2".format(build))
     for img2_file in img2_files:
         log_info("Stripping IMG2 header from {}".format(img2_file.rsplit("\\", 1)[1]))
-        strip_img2_header(img2_file, "{}.stripped".format(img2_file))
+        strip_8900_header(img2_file, "{}.stripped".format(img2_file))
 
         log_info("Placing stripped IMG2 file {} into Contents folder".format(img2_file.rsplit("\\", 1)[1]))
         os.makedirs(os.path.dirname("Contents/{}".format(img2_file[4:])), exist_ok=True)
