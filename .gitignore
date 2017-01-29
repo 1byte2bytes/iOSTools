@@ -2,8 +2,8 @@
 ###################
 *.com
 *.class
-*.dll
-*.exe
+#*.dll
+#*.exe
 *.o
 *.so
 *.pyc
@@ -16,6 +16,8 @@
 *.s5l8900xrb
 *.dfu
 *.plist
+*.stripped
+*.decrypt
 
 # Packages #
 ############
