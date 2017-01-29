@@ -93,3 +93,10 @@ for IPSW in IPSW_files:
             log_info("DMG file {} is not encrypted".format(dmg.rsplit("\\", 1)[1]))
             log_info("Placing stripped DMG file {} into Contents folder".format(dmg.rsplit("\\", 1)[1]))
             shutil.copyfile("{}.stripped".format(dmg), "Contents/{}".format(dmg[4:]))
+
+    kernels = glob.glob("Temp/{}/kernelcache*".format(build))
+    for kernel in kernels:
+        log_info("Stripping 8900 header from kernel file {}".format(kernel.rsplit("\\", 1)[1]))
+        strip_8900_header(kernel, "{}.stripped".format(kernel))
+        log_info("Placing stripped kernel file {} into Contents folder".format(kernel.rsplit("\\", 1)[1]))
+        shutil.copyfile("{}.stripped".format(kernel), "Contents/{}".format(kernel[4:]))
