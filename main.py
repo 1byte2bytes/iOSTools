@@ -55,7 +55,9 @@ def get_encrypt_key(build, filename):
             if keysplit[1] == filename:
                 return keysplit[2]
 
-valid_builds = ["1A543a", "1C25", "1C28"]
+key_0x837 = "188458A6D15034DFE386F23B61D43774"
+valid_builds = ["1A543a", "1C25", "1C28", "3A109a"]
+os.system("Win\\bin\\openssl enc -d -in \"{}\" -out \"{}\" -aes-128-cbc -K \"{}\" -iv 0".format("022-3629-9.dmg", "022-3629-9.dmg.decrypt", key_0x837))
 
 IPSW_files = glob.glob("IPSW/*.ipsw")
 for IPSW in IPSW_files:
