@@ -8,6 +8,8 @@
 *.so
 *.pyc
 
+build
+
 # iOS files #
 #############
 *.ipsw
