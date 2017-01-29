@@ -9,3 +9,8 @@ setup(  name = "strip8900",
         version = "0.1",
         description = "8900 header stripping tool",
         executables = [Executable("Tools\\strip8900.py", base=base)])
+
+setup(  name = "checkdmgencrypt",
+        version = "0.1",
+        description = "DMG encryption checking tool",
+        executables = [Executable("Tools\\checkdmgencrypt.py", base=base)])
