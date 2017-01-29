@@ -98,7 +98,6 @@ for IPSW in IPSW_files:
         strip_8900_header(dmg, "{}.stripped".format(dmg))
         if check_if_encypted("{}.stripped".format(dmg)) == True:
             log_info("Decrypting DMG file {}".format(dmg.rsplit("\\", 1)[1]))
-            print("Win\\bin\\vfdecrypt -i \"{}\" -k \"{}\" -o \"{}\"".format("{}.stripped".format(dmg), get_encrypt_key(build, dmg.rsplit("\\", 1)[1]), "{}.decrypt".format(dmg)))
             os.system("Win\\bin\\vfdecrypt -i \"{}\" -k \"{}\" -o \"{}\"".format("{}.stripped".format(dmg), get_encrypt_key(build, dmg.rsplit("\\", 1)[1]).strip(), "{}.decrypt".format(dmg)))
             log_info("Placing decrpyted DMG file {} into Contents folder".format(dmg.rsplit("\\", 1)[1]))
             shutil.copyfile("{}.decrypt".format(dmg), "Contents/{}".format(dmg[4:]))
