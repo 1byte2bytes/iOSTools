@@ -4,6 +4,7 @@ import os
 import os.path
 import sys
 import shutil
+from subprocess import Popen, PIPE, STDOUT
 
 def log_debug(message):
     print("[DEBUG  ] {}".format(message))
@@ -35,6 +36,13 @@ def strip_8900_header(filename, stripped_filename):
     with open(stripped_filename, 'wb') as f:
         f.write(file_bytes)
 
+def check_if_encypted(filename):
+    with open(filename, 'rb') as f:
+        header = f.read(8)
+        if header.startswith(b"encrcdsa"):
+            return True
+        else:
+            return False
 
 valid_builds = ["1A543a"]
 
@@ -71,3 +79,17 @@ for IPSW in IPSW_files:
     log_info("Copying manifest file into Contents folder")
     manifest_temp = glob.glob("Temp/{}/Firmware/all_flash/*/manifest".format(build))
     shutil.copyfile(manifest_temp[0], "Contents/{}".format(manifest_temp[0][4:]))
+
+    dmg_files = glob.glob("Temp/{}/*.dmg".format(build))
+    for dmg in dmg_files:
+        log_info("Stripping 8900 header from DMG file {}".format(dmg.rsplit("\\", 1)[1]))
+        strip_8900_header(dmg, "{}.stripped".format(dmg))
+        if check_if_encypted("{}.stripped".format(dmg)) == True:
+            log_info("Decrypting DMG file {}".format(dmg.rsplit("\\", 1)[1]))
+            os.system("Win\\bin\\vfdecrypt -i {} -k {} -o {}".format("{}.stripped".format(dmg), "28c909fc6d322fa18940f03279d70880e59a4507998347c70d5b8ca7ef090ecccc15e82d", "{}.decrypt".format(dmg)))
+            log_info("Placing decrpyted DMG file {} into Contents folder".format(dmg.rsplit("\\", 1)[1]))
+            shutil.copyfile("{}.decrypt".format(dmg), "Contents/{}".format(dmg[4:]))
+        else:
+            log_info("DMG file {} is not encrypted".format(dmg.rsplit("\\", 1)[1]))
+            log_info("Placing stripped DMG file {} into Contents folder".format(dmg.rsplit("\\", 1)[1]))
+            shutil.copyfile("{}.stripped".format(dmg), "Contents/{}".format(dmg[4:]))
