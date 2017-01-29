@@ -4,7 +4,8 @@ import os
 import os.path
 import sys
 import shutil
-from subprocess import Popen, PIPE, STDOUT
+import lxml.html
+import urllib.request
 
 def log_debug(message):
     print("[DEBUG  ] {}".format(message))
@@ -44,7 +45,17 @@ def check_if_encypted(filename):
         else:
             return False
 
-valid_builds = ["1A543a"]
+def get_encrypt_key(build, filename):
+    key_lines = []
+    with open("keys.txt", 'r') as f:
+        key_lines = f.readlines()
+    for key in key_lines:
+        keysplit = key.split(";")
+        if keysplit[0] == build:
+            if keysplit[1] == filename:
+                return keysplit[2]
+
+valid_builds = ["1A543a", "1C25", "1C28"]
 
 IPSW_files = glob.glob("IPSW/*.ipsw")
 for IPSW in IPSW_files:
@@ -55,6 +66,7 @@ for IPSW in IPSW_files:
         if build in IPSW_split:
             log_info("Detected iOS build {}".format(build))
             IPSW_build = build
+            break
     if IPSW_build == "":
         log_info("{} is invalid, perhaps the build is not supported".format(IPSW))
         sys.exit(1)
@@ -86,7 +98,8 @@ for IPSW in IPSW_files:
         strip_8900_header(dmg, "{}.stripped".format(dmg))
         if check_if_encypted("{}.stripped".format(dmg)) == True:
             log_info("Decrypting DMG file {}".format(dmg.rsplit("\\", 1)[1]))
-            os.system("Win\\bin\\vfdecrypt -i {} -k {} -o {}".format("{}.stripped".format(dmg), "28c909fc6d322fa18940f03279d70880e59a4507998347c70d5b8ca7ef090ecccc15e82d", "{}.decrypt".format(dmg)))
+            print("Win\\bin\\vfdecrypt -i \"{}\" -k \"{}\" -o \"{}\"".format("{}.stripped".format(dmg), get_encrypt_key(build, dmg.rsplit("\\", 1)[1]), "{}.decrypt".format(dmg)))
+            os.system("Win\\bin\\vfdecrypt -i \"{}\" -k \"{}\" -o \"{}\"".format("{}.stripped".format(dmg), get_encrypt_key(build, dmg.rsplit("\\", 1)[1]).strip(), "{}.decrypt".format(dmg)))
             log_info("Placing decrpyted DMG file {} into Contents folder".format(dmg.rsplit("\\", 1)[1]))
             shutil.copyfile("{}.decrypt".format(dmg), "Contents/{}".format(dmg[4:]))
         else:
