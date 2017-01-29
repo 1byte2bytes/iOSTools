@@ -100,3 +100,11 @@ for IPSW in IPSW_files:
         strip_8900_header(kernel, "{}.stripped".format(kernel))
         log_info("Placing stripped kernel file {} into Contents folder".format(kernel.rsplit("\\", 1)[1]))
         shutil.copyfile("{}.stripped".format(kernel), "Contents/{}".format(kernel[4:]))
+
+    dfu_files = glob.glob("Temp/{}/Firmware/dfu/*.dfu".format(build))
+    for dfu_file in dfu_files:
+        log_info("Stripping 8900 header from DFU file {}".format(dfu_file.rsplit("\\", 1)[1]))
+        strip_8900_header(dfu_file, "{}.stripped".format(dfu_file))
+        log_info("Placing stripped DFU file {} into Contents folder".format(dfu_file.rsplit("\\", 1)[1]))
+        os.makedirs(os.path.dirname("Contents/{}".format(dfu_file[4:])), exist_ok=True)
+        shutil.copyfile("{}.stripped".format(dfu_file), "Contents/{}".format(dfu_file[4:]))
