@@ -38,6 +38,7 @@ int main(int argc, char* argv[]) {
         printf("Stripping file %s\r\n", argv[1]);
     } else {
         printf("No 8900 header found.\r\n");
+        exit(-3);
     }
 
     stripped = fopen((const char *)argv[2], "wb");
