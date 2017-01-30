@@ -1,1 +1,0 @@
-The contents of the IPSW will be placed here after running the script
