@@ -8,15 +8,14 @@ include_directories(mac/include)
 find_package(OpenSSL REQUIRED)
 include_directories(${OPENSSL_INCLUDE_DIR})
 endif()
+include_directories(libraries/include)
 
-#8900strip
-add_executable (8900strip tools/8900strip/8900strip.c)
-
-#checkdmgencrypt
-add_executable (checkdmgencrypt tools/checkdmgencrypt/checkdmgencrypt.c)
+#------------------------------------------------------------------
+# LIBRARIES
+#------------------------------------------------------------------
 
 #liblzfse
-add_library(lzfse
+add_library(lzfse SHARED
   libraries/lzfse/lzfse_decode.c
   libraries/lzfse/lzfse_decode_base.c
   libraries/lzfse/lzfse_encode.c
@@ -25,6 +24,47 @@ add_library(lzfse
   libraries/lzfse/lzvn_decode_base.c
   libraries/lzfse/lzvn_encode_base.c)
 include_directories(libraries/lzfse)
+
+add_library(libcnary SHARED
+  libraries/libcnary/cnary.c
+  libraries/libcnary/iterator.c
+  libraries/libcnary/list.c
+  libraries/libcnary/node.c
+  libraries/libcnary/node_iterator.c
+  libraries/libcnary/node_list.c)
+
+add_library(libplist SHARED
+  libraries/libplist/Array.cpp
+  libraries/libplist/base64.c
+  libraries/libplist/Boolean.cpp
+  libraries/libplist/bplist.c
+  libraries/libplist/bytearray.c
+  libraries/libplist/Data.cpp
+  libraries/libplist/Date.cpp
+  libraries/libplist/Dictionary.cpp
+  libraries/libplist/hashtable.c
+  libraries/libplist/Integer.cpp
+  libraries/libplist/Key.cpp
+  libraries/libplist/Node.cpp
+  libraries/libplist/plist.c
+  libraries/libplist/ptrarray.c
+  libraries/libplist/Real.cpp
+  libraries/libplist/String.cpp
+  libraries/libplist/Structure.cpp
+  libraries/libplist/time64.c
+  libraries/libplist/Uid.cpp
+  libraries/libplist/xplist.c)
+target_link_libraries(libplist libcnary)
+
+#------------------------------------------------------------------
+# TOOLS
+#------------------------------------------------------------------
+
+#8900strip
+add_executable (8900strip tools/8900strip/8900strip.c)
+
+#checkdmgencrypt
+add_executable (checkdmgencrypt tools/checkdmgencrypt/checkdmgencrypt.c)
 
 #decompkernelcache
 add_executable (decompkernelcache tools/decompkernelcache/decompkernelcache.c)
