@@ -56,6 +56,12 @@ add_library(libplist SHARED
   libraries/libplist/xplist.c)
 target_link_libraries(libplist libcnary)
 
+add_library(libusbmuxd SHARED 
+  libraries/libusbmuxd/libusbmuxd.c
+  libraries/libusbmuxd/collection.c
+  libraries/libusbmuxd/socket.c)
+target_link_libraries(libusbmuxd libplist)
+
 #------------------------------------------------------------------
 # TOOLS
 #------------------------------------------------------------------
@@ -73,6 +79,10 @@ target_link_libraries(decompkernelcache lzfse)
 #plistutil
 add_executable(plistutil tools/plistutil/plistutil.c)
 target_link_libraries(plistutil libplist)
+
+#plistutil
+add_executable(iproxy tools/iproxy/iproxy.c)
+target_link_libraries(iproxy libusbmuxd)
 
 #kcache
 add_executable (kcache tools/kcache/crypto.c tools/kcache/kcache.c tools/kcache/lzss.c tools/kcache/util.c)
