@@ -14,7 +14,7 @@ include_directories(libraries/include)
 # LIBRARIES
 #------------------------------------------------------------------
 
-#liblzfse
+#LIBLZFSE
 add_library(lzfse SHARED
   libraries/lzfse/lzfse_decode.c
   libraries/lzfse/lzfse_decode_base.c
@@ -25,6 +25,7 @@ add_library(lzfse SHARED
   libraries/lzfse/lzvn_encode_base.c)
 include_directories(libraries/lzfse)
 
+#LIBCNARY
 add_library(libcnary SHARED
   libraries/libcnary/cnary.c
   libraries/libcnary/iterator.c
@@ -33,6 +34,7 @@ add_library(libcnary SHARED
   libraries/libcnary/node_iterator.c
   libraries/libcnary/node_list.c)
 
+#LIBPLIST
 add_library(libplist SHARED
   libraries/libplist/Array.cpp
   libraries/libplist/base64.c
@@ -56,19 +58,20 @@ add_library(libplist SHARED
   libraries/libplist/xplist.c)
 target_link_libraries(libplist libcnary)
 
+#LIBUSBMUXD
 add_library(libusbmuxd SHARED 
   libraries/libusbmuxd/libusbmuxd.c
   libraries/libusbmuxd/collection.c
   libraries/libusbmuxd/socket.c)
 target_link_libraries(libusbmuxd libplist)
 
+#LIBUSB
 set(libusb_shared_sources libraries/libusb/core.c
   libraries/libusb/descriptor.c
   libraries/libusb/hotplug.c
   libraries/libusb/io.c
   libraries/libusb/strerror.c
   libraries/libusb/sync.c)
-
 if(APPLE)
 set(libusb_os_sources libraries/libusb/os/darwin_usb.c)
 elseif(WIN32)
