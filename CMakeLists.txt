@@ -70,6 +70,10 @@ add_executable (checkdmgencrypt tools/checkdmgencrypt/checkdmgencrypt.c)
 add_executable (decompkernelcache tools/decompkernelcache/decompkernelcache.c)
 target_link_libraries(decompkernelcache lzfse)
 
+#plistutil
+add_executable(plistutil tools/plistutil/plistutil.c)
+target_link_libraries(plistutil libplist)
+
 #kcache
 add_executable (kcache tools/kcache/crypto.c tools/kcache/kcache.c tools/kcache/lzss.c tools/kcache/util.c)
 if(WIN32)
