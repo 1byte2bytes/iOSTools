@@ -62,6 +62,38 @@ add_library(libusbmuxd SHARED
   libraries/libusbmuxd/socket.c)
 target_link_libraries(libusbmuxd libplist)
 
+set(libusb_shared_sources libraries/libusb/core.c
+  libraries/libusb/descriptor.c
+  libraries/libusb/hotplug.c
+  libraries/libusb/io.c
+  libraries/libusb/strerror.c
+  libraries/libusb/sync.c)
+
+if(APPLE)
+set(libusb_os_sources libraries/libusb/os/darwin_usb.c)
+elseif(WIN32)
+set(libusb_os_sources libraries/libusb/os/windows_nt_common.c
+  libraries/libusb/os/windows_usbdk.c
+  libraries/libusb/os/windows_winusb.c)
+else()
+set(libusb_os_sources libraries/libusb/os/linux_netlink.c
+  libraries/libusb/os/linux_udev.c
+  libraries/libusb/os/linux_usbfs.c)
+endif()
+if(UNIX)
+set(libusb_platform_sources libraries/libusb/os/poll_posix.c
+  libraries/libusb/os/threads_posix.c)
+elseif(WIN32)
+set(libusb_platform_sources libraries/libusb/os/poll_windows.c
+  libraries/libusb/os/threads_windows.c)
+endif()
+add_library(libusb SHARED ${libusb_shared_sources} ${libusb_os_sources} ${libusb_platform_sources})
+if(APPLE)
+target_link_libraries(libusb "-framework CoreFoundation")
+target_link_libraries(libusb "-framework IOKit")
+set_target_properties(libusb PROPERTIES LINK_FLAGS "-Wl,-F/Library/Frameworks")
+endif()
+
 #------------------------------------------------------------------
 # TOOLS
 #------------------------------------------------------------------
