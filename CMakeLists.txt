@@ -14,7 +14,7 @@ include_directories(libraries/include)
 # LIBRARIES
 #------------------------------------------------------------------
 
-#liblzfse
+#LIBLZFSE
 add_library(lzfse SHARED
   libraries/lzfse/lzfse_decode.c
   libraries/lzfse/lzfse_decode_base.c
@@ -25,6 +25,7 @@ add_library(lzfse SHARED
   libraries/lzfse/lzvn_encode_base.c)
 include_directories(libraries/lzfse)
 
+#LIBCNARY
 add_library(libcnary SHARED
   libraries/libcnary/cnary.c
   libraries/libcnary/iterator.c
@@ -33,6 +34,7 @@ add_library(libcnary SHARED
   libraries/libcnary/node_iterator.c
   libraries/libcnary/node_list.c)
 
+#LIBPLIST
 add_library(libplist SHARED
   libraries/libplist/Array.cpp
   libraries/libplist/base64.c
@@ -56,11 +58,44 @@ add_library(libplist SHARED
   libraries/libplist/xplist.c)
 target_link_libraries(libplist libcnary)
 
+#LIBUSBMUXD
 add_library(libusbmuxd SHARED 
   libraries/libusbmuxd/libusbmuxd.c
   libraries/libusbmuxd/collection.c
   libraries/libusbmuxd/socket.c)
 target_link_libraries(libusbmuxd libplist)
+
+#LIBUSB
+set(libusb_shared_sources libraries/libusb/core.c
+  libraries/libusb/descriptor.c
+  libraries/libusb/hotplug.c
+  libraries/libusb/io.c
+  libraries/libusb/strerror.c
+  libraries/libusb/sync.c)
+if(APPLE)
+set(libusb_os_sources libraries/libusb/os/darwin_usb.c)
+elseif(WIN32)
+set(libusb_os_sources libraries/libusb/os/windows_nt_common.c
+  libraries/libusb/os/windows_usbdk.c
+  libraries/libusb/os/windows_winusb.c)
+else()
+set(libusb_os_sources libraries/libusb/os/linux_netlink.c
+  libraries/libusb/os/linux_udev.c
+  libraries/libusb/os/linux_usbfs.c)
+endif()
+if(UNIX)
+set(libusb_platform_sources libraries/libusb/os/poll_posix.c
+  libraries/libusb/os/threads_posix.c)
+elseif(WIN32)
+set(libusb_platform_sources libraries/libusb/os/poll_windows.c
+  libraries/libusb/os/threads_windows.c)
+endif()
+add_library(libusb SHARED ${libusb_shared_sources} ${libusb_os_sources} ${libusb_platform_sources})
+if(APPLE)
+target_link_libraries(libusb "-framework CoreFoundation")
+target_link_libraries(libusb "-framework IOKit")
+set_target_properties(libusb PROPERTIES LINK_FLAGS "-Wl,-F/Library/Frameworks")
+endif()
 
 #------------------------------------------------------------------
 # TOOLS
@@ -87,8 +122,8 @@ target_link_libraries(iproxy libusbmuxd)
 #kcache
 add_executable (kcache tools/kcache/crypto.c tools/kcache/kcache.c tools/kcache/lzss.c tools/kcache/util.c)
 if(WIN32)
-TARGET_LINK_LIBRARIES(kcache ../win/ssleay32)
-TARGET_LINK_LIBRARIES(kcache ../win/libeay32)
+TARGET_LINK_LIBRARIES(kcache ${CMAKE_SOURCE_DIR}/win/ssleay32)
+TARGET_LINK_LIBRARIES(kcache ${CMAKE_SOURCE_DIR}/win/libeay32)
 else()
 TARGET_LINK_LIBRARIES(kcache ${OPENSSL_LIBRARIES})
 endif()
@@ -96,8 +131,8 @@ endif()
 #genpass
 if(WIN32)
 add_executable (genpass tools/genpass/genpass.cpp win/getopt.c)
-TARGET_LINK_LIBRARIES(genpass ../win/ssleay32)
-TARGET_LINK_LIBRARIES(genpass ../win/libeay32)
+TARGET_LINK_LIBRARIES(genpass ${CMAKE_SOURCE_DIR}/win/ssleay32)
+TARGET_LINK_LIBRARIES(genpass ${CMAKE_SOURCE_DIR}/win/libeay32)
 else()
 add_executable (genpass tools/genpass/genpass.cpp)
 TARGET_LINK_LIBRARIES(genpass ${OPENSSL_LIBRARIES})
@@ -106,8 +141,8 @@ endif()
 #vfdecrypt
 if (WIN32)
 add_executable (vfdecrypt tools/vfdecrypt/vfdecrypt.c win/getopt.c)
-TARGET_LINK_LIBRARIES(vfdecrypt ../win/ssleay32)
-TARGET_LINK_LIBRARIES(vfdecrypt ../win/libeay32)
+TARGET_LINK_LIBRARIES(vfdecrypt ${CMAKE_SOURCE_DIR}/win/ssleay32)
+TARGET_LINK_LIBRARIES(vfdecrypt ${CMAKE_SOURCE_DIR}/win/libeay32)
 target_link_libraries(vfdecrypt wsock32 ws2_32)
 else()
 add_executable (vfdecrypt tools/vfdecrypt/vfdecrypt.c)
